@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>変革管理 計画 テンプレート</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-800 mb-2">変革管理（Change Management）計画テンプレート</h1>
+  <p class="text-gray-500 mb-6">組織変革の計画を体系的に整理し、Markdownドキュメントに出力します</p>
+
+  <div class="flex gap-3 mb-6 flex-wrap">
+    <button id="save-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">💾 保存</button>
+    <button id="load-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm">📂 復元</button>
+    <button id="generate-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">📄 Markdown生成</button>
+    <button id="copy-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm hidden">📋 コピー</button>
+    <button id="load-sample" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-lg text-sm">サンプル読込</button>
+  </div>
+
+  <div class="space-y-6" id="form-area">
+    <!-- セクション1: 変革概要 -->
+    <section class="bg-white rounded-xl shadow p-6">
+      <h2 class="text-xl font-semibold text-indigo-700 mb-4">1. 変革概要</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">プロジェクト名 <span class="text-red-500">*</span></label>
+          <input type="text" id="project-name" class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" placeholder="例: 全社DX推進プロジェクト">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">開始予定日</label>
+            <input type="date" id="start-date" class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">完了予定日</label>
+            <input type="date" id="end-date" class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">変革の目的・背景</label>
+          <textarea id="purpose" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" placeholder="なぜこの変革が必要か、背景を記述してください"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">目標・成功指標（KPI）</label>
+          <textarea id="kpi" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" placeholder="例: 業務効率20%改善、紙作業ゼロ化、顧客満足度スコア+10pt"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">スポンサー / 責任者</label>
+          <input type="text" id="sponsor" class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" placeholder="例: 代表取締役 / 変革推進部長">
+        </div>
+      </div>
+    </section>
+
+    <!-- セクション2: 影響分析 -->
+    <section class="bg-white rounded-xl shadow p-6">
+      <h2 class="text-xl font-semibold text-blue-700 mb-4">2. 影響分析（ステークホルダー）</h2>
+      <div id="stakeholders-list" class="space-y-3 mb-3"></div>
+      <button id="add-stakeholder" class="text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded" aria-label="ステークホルダー追加">＋ ステークホルダーを追加</button>
+    </section>
+
+    <!-- セクション3: 抵抗要因 -->
+    <section class="bg-white rounded-xl shadow p-6">
+      <h2 class="text-xl font-semibold text-orange-700 mb-4">3. 抵抗要因と対策</h2>
+      <div id="resistances-list" class="space-y-3 mb-3"></div>
+      <button id="add-resistance" class="text-sm bg-orange-100 hover:bg-orange-200 text-orange-700 px-3 py-1 rounded" aria-label="抵抗要因追加">＋ 抵抗要因を追加</button>
+    </section>
+
+    <!-- セクション4: コミュニケーション計画 -->
+    <section class="bg-white rounded-xl shadow p-6">
+      <h2 class="text-xl font-semibold text-green-700 mb-4">4. コミュニケーション計画</h2>
+      <div id="comms-list" class="space-y-3 mb-3"></div>
+      <button id="add-comm" class="text-sm bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded" aria-label="コミュニケーション施策追加">＋ 施策を追加</button>
+    </section>
+
+    <!-- セクション5: リスク -->
+    <section class="bg-white rounded-xl shadow p-6">
+      <h2 class="text-xl font-semibold text-red-700 mb-4">5. リスクと軽減策</h2>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">主要リスク・軽減策</label>
+        <textarea id="risks" rows="4" class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-300 focus:outline-none" placeholder="例: リスク: スケジュール遅延 → 軽減策: 週次進捗チェック&#10;リスク: 予算超過 → 軽減策: 月次予算レビュー"></textarea>
+      </div>
+    </section>
+  </div>
+
+  <!-- Markdown出力 -->
+  <div id="output-area" class="hidden mt-6 bg-gray-900 text-green-300 rounded-xl shadow p-6">
+    <div class="flex justify-between items-center mb-3">
+      <h2 class="font-semibold text-green-400">生成された Markdown</h2>
+      <button id="close-output" class="text-gray-400 hover:text-gray-200 text-sm">✕ 閉じる</button>
+    </div>
+    <pre id="markdown-output" class="text-xs overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed"></pre>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY='change-mgmt-v1';
+let stakeholders=[{group:'現場社員',impact:'高',support:'低',notes:''}];
+let resistances=[{factor:'作業量増加への懸念',severity:'高',action:''}];
+let comms=[{timing:'変革開始前',channel:'全社メール',message:'',owner:''}];
+
+function sanitize(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function renderStakeholders(){
+  const el=document.getElementById('stakeholders-list');
+  el.innerHTML='';
+  stakeholders.forEach((s,i)=>{
+    const row=document.createElement('div');
+    row.className='border rounded-lg p-3 bg-blue-50 grid grid-cols-1 gap-2';
+    row.innerHTML=`<div class="grid grid-cols-3 gap-2">
+      <input type="text" value="${sanitize(s.group)}" placeholder="グループ名" class="border rounded px-2 py-1 text-sm" data-si="${i}" data-field="group" aria-label="ステークホルダーグループ名">
+      <select data-si="${i}" data-field="impact" class="border rounded px-2 py-1 text-sm" aria-label="影響度">
+        <option value="高" ${s.impact==='高'?'selected':''}>影響: 高</option>
+        <option value="中" ${s.impact==='中'?'selected':''}>影響: 中</option>
+        <option value="低" ${s.impact==='低'?'selected':''}>影響: 低</option>
+      </select>
+      <div class="flex gap-2">
+        <select data-si="${i}" data-field="support" class="border rounded px-2 py-1 text-sm flex-1" aria-label="支持度">
+          <option value="高" ${s.support==='高'?'selected':''}>支持: 高</option>
+          <option value="中" ${s.support==='中'?'selected':''}>支持: 中</option>
+          <option value="低" ${s.support==='低'?'selected':''}>支持: 低</option>
+        </select>
+        <button data-si="${i}" class="remove-sh text-red-400 hover:text-red-600 px-2" aria-label="削除">✕</button>
+      </div>
+    </div>
+    <input type="text" value="${sanitize(s.notes)}" placeholder="対応方針・備考" class="border rounded px-2 py-1 text-sm w-full" data-si="${i}" data-field="notes" aria-label="対応方針">`;
+    el.appendChild(row);
+  });
+  el.querySelectorAll('input,select').forEach(inp=>inp.addEventListener('input',e=>{stakeholders[+e.target.dataset.si][e.target.dataset.field]=e.target.value;}));
+  el.querySelectorAll('.remove-sh').forEach(btn=>btn.addEventListener('click',e=>{stakeholders.splice(+e.target.dataset.si,1);renderStakeholders();}));
+}
+
+function renderResistances(){
+  const el=document.getElementById('resistances-list');
+  el.innerHTML='';
+  resistances.forEach((r,i)=>{
+    const row=document.createElement('div');
+    row.className='border rounded-lg p-3 bg-orange-50 grid grid-cols-1 gap-2';
+    row.innerHTML=`<div class="flex gap-2">
+      <input type="text" value="${sanitize(r.factor)}" placeholder="抵抗要因" class="border rounded px-2 py-1 text-sm flex-1" data-ri="${i}" data-field="factor" aria-label="抵抗要因">
+      <select data-ri="${i}" data-field="severity" class="border rounded px-2 py-1 text-sm" aria-label="深刻度">
+        <option value="高" ${r.severity==='高'?'selected':''}>深刻度: 高</option>
+        <option value="中" ${r.severity==='中'?'selected':''}>深刻度: 中</option>
+        <option value="低" ${r.severity==='低'?'selected':''}>深刻度: 低</option>
+      </select>
+      <button data-ri="${i}" class="remove-rs text-red-400 hover:text-red-600 px-2" aria-label="削除">✕</button>
+    </div>
+    <input type="text" value="${sanitize(r.action)}" placeholder="対策・緩和策" class="border rounded px-2 py-1 text-sm w-full" data-ri="${i}" data-field="action" aria-label="対策">`;
+    el.appendChild(row);
+  });
+  el.querySelectorAll('input,select').forEach(inp=>inp.addEventListener('input',e=>{resistances[+e.target.dataset.ri][e.target.dataset.field]=e.target.value;}));
+  el.querySelectorAll('.remove-rs').forEach(btn=>btn.addEventListener('click',e=>{resistances.splice(+e.target.dataset.ri,1);renderResistances();}));
+}
+
+function renderComms(){
+  const el=document.getElementById('comms-list');
+  el.innerHTML='';
+  comms.forEach((c,i)=>{
+    const row=document.createElement('div');
+    row.className='border rounded-lg p-3 bg-green-50 grid grid-cols-1 gap-2';
+    row.innerHTML=`<div class="grid grid-cols-3 gap-2">
+      <input type="text" value="${sanitize(c.timing)}" placeholder="タイミング" class="border rounded px-2 py-1 text-sm" data-ci="${i}" data-field="timing" aria-label="タイミング">
+      <input type="text" value="${sanitize(c.channel)}" placeholder="チャネル" class="border rounded px-2 py-1 text-sm" data-ci="${i}" data-field="channel" aria-label="チャネル">
+      <div class="flex gap-2">
+        <input type="text" value="${sanitize(c.owner)}" placeholder="担当者" class="border rounded px-2 py-1 text-sm flex-1" data-ci="${i}" data-field="owner" aria-label="担当者">
+        <button data-ci="${i}" class="remove-cm text-red-400 hover:text-red-600 px-2" aria-label="削除">✕</button>
+      </div>
+    </div>
+    <input type="text" value="${sanitize(c.message)}" placeholder="メッセージ概要" class="border rounded px-2 py-1 text-sm w-full" data-ci="${i}" data-field="message" aria-label="メッセージ概要">`;
+    el.appendChild(row);
+  });
+  el.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{comms[+e.target.dataset.ci][e.target.dataset.field]=e.target.value;}));
+  el.querySelectorAll('.remove-cm').forEach(btn=>btn.addEventListener('click',e=>{comms.splice(+e.target.dataset.ci,1);renderComms();}));
+}
+
+function getFormData(){
+  return{
+    projectName:document.getElementById('project-name').value,
+    startDate:document.getElementById('start-date').value,
+    endDate:document.getElementById('end-date').value,
+    purpose:document.getElementById('purpose').value,
+    kpi:document.getElementById('kpi').value,
+    sponsor:document.getElementById('sponsor').value,
+    risks:document.getElementById('risks').value,
+    stakeholders:[...stakeholders],
+    resistances:[...resistances],
+    comms:[...comms]
+  };
+}
+
+function generateMarkdown(d){
+  return`# 変革管理計画書: ${d.projectName||'（タイトル未入力）'}
+
+**作成日**: ${new Date().toLocaleDateString('ja-JP')}
+**期間**: ${d.startDate||'—'} 〜 ${d.endDate||'—'}
+**スポンサー**: ${d.sponsor||'—'}
+
+---
+
+## 1. 変革の目的・背景
+
+${d.purpose||'（未入力）'}
+
+## 2. 目標・成功指標（KPI）
+
+${d.kpi||'（未入力）'}
+
+---
+
+## 3. ステークホルダー影響分析
+
+| グループ | 影響度 | 支持度 | 対応方針 |
+|---------|--------|--------|---------|
+${d.stakeholders.map(s=>`| ${s.group} | ${s.impact} | ${s.support} | ${s.notes||'—'} |`).join('\n')}
+
+---
+
+## 4. 抵抗要因と対策
+
+| 抵抗要因 | 深刻度 | 対策・緩和策 |
+|---------|--------|------------|
+${d.resistances.map(r=>`| ${r.factor} | ${r.severity} | ${r.action||'—'} |`).join('\n')}
+
+---
+
+## 5. コミュニケーション計画
+
+| タイミング | チャネル | メッセージ概要 | 担当者 |
+|----------|---------|-------------|--------|
+${d.comms.map(c=>`| ${c.timing} | ${c.channel} | ${c.message||'—'} | ${c.owner||'—'} |`).join('\n')}
+
+---
+
+## 6. リスクと軽減策
+
+${d.risks||'（未入力）'}
+
+---
+
+*この文書は変革管理計画テンプレートによって生成されました。*
+`;
+}
+
+document.getElementById('add-stakeholder').addEventListener('click',()=>{stakeholders.push({group:'',impact:'中',support:'中',notes:''});renderStakeholders();});
+document.getElementById('add-resistance').addEventListener('click',()=>{resistances.push({factor:'',severity:'中',action:''});renderResistances();});
+document.getElementById('add-comm').addEventListener('click',()=>{comms.push({timing:'',channel:'',message:'',owner:''});renderComms();});
+
+document.getElementById('save-btn').addEventListener('click',()=>{
+  localStorage.setItem(STORAGE_KEY,JSON.stringify({...getFormData(),stakeholders,resistances,comms}));
+  alert('保存しました');
+});
+
+document.getElementById('load-btn').addEventListener('click',()=>{
+  const d=localStorage.getItem(STORAGE_KEY);
+  if(!d){alert('保存データがありません');return;}
+  const p=JSON.parse(d);
+  document.getElementById('project-name').value=p.projectName||'';
+  document.getElementById('start-date').value=p.startDate||'';
+  document.getElementById('end-date').value=p.endDate||'';
+  document.getElementById('purpose').value=p.purpose||'';
+  document.getElementById('kpi').value=p.kpi||'';
+  document.getElementById('sponsor').value=p.sponsor||'';
+  document.getElementById('risks').value=p.risks||'';
+  stakeholders=p.stakeholders||[];resistances=p.resistances||[];comms=p.comms||[];
+  renderStakeholders();renderResistances();renderComms();
+  alert('復元しました');
+});
+
+document.getElementById('load-sample').addEventListener('click',()=>{
+  document.getElementById('project-name').value='全社DX推進プロジェクト2026';
+  document.getElementById('start-date').value='2026-01-04';
+  document.getElementById('end-date').value='2026-12-31';
+  document.getElementById('purpose').value='紙ベースの業務プロセスをデジタル化し、業務効率の向上と顧客対応速度の改善を実現する。競合他社の台頭と市場環境の変化に対応するため、全社的なDX推進が急務となっている。';
+  document.getElementById('kpi').value='• 業務処理時間 30%削減\n• 紙使用量 80%削減\n• 顧客対応リードタイム 2営業日以内\n• 従業員DXリテラシースコア平均70点以上';
+  document.getElementById('sponsor').value='代表取締役CEO / DX推進委員会委員長';
+  document.getElementById('risks').value='リスク: 基幹システム移行時のデータ損失 → 軽減策: 段階的移行+バックアップ体制構築\nリスク: 予算超過（想定+20%） → 軽減策: 月次予算レビュー+予備費20%確保';
+  stakeholders=[
+    {group:'現場社員（全部門）',impact:'高',support:'低',notes:'丁寧な研修と変化メリットの可視化'},
+    {group:'管理職',impact:'高',support:'中',notes:'早期巻き込み・決裁権限の明確化'},
+    {group:'IT部門',impact:'高',support:'高',notes:'中心的な推進役として位置付け'},
+    {group:'顧客',impact:'中',support:'中',notes:'UI/UX改善効果を段階的に見せる'}
+  ];
+  resistances=[
+    {factor:'デジタルスキル不足への不安',severity:'高',action:'全社研修プログラム実施・サポートデスク設置'},
+    {factor:'業務量一時増加への懸念',severity:'中',action:'移行期間中の業務負荷軽減措置・残業抑制'},
+    {factor:'雇用への影響懸念',severity:'高',action:'役割変化の事前説明・キャリア開発支援'}
+  ];
+  comms=[
+    {timing:'プロジェクト開始前',channel:'全社説明会・CEO動画メッセージ',message:'変革の必要性・ビジョン・全員への影響説明',owner:'CEO・広報部'},
+    {timing:'月次',channel:'社内ニュースレター・Slack',message:'進捗報告・成功事例紹介・Q&A',owner:'DX推進事務局'},
+    {timing:'移行フェーズ開始時',channel:'部門別ワークショップ',message:'操作研修・具体的な業務変更点の説明',owner:'IT部門・各部門長'}
+  ];
+  renderStakeholders();renderResistances();renderComms();
+});
+
+document.getElementById('generate-btn').addEventListener('click',()=>{
+  const md=generateMarkdown(getFormData());
+  const pre=document.getElementById('markdown-output');
+  pre.textContent=md;
+  const out=document.getElementById('output-area');
+  out.classList.remove('hidden');
+  document.getElementById('copy-btn').classList.remove('hidden');
+  out.scrollIntoView({behavior:'smooth'});
+});
+
+document.getElementById('copy-btn').addEventListener('click',()=>{
+  const text=document.getElementById('markdown-output').textContent;
+  navigator.clipboard.writeText(text).then(()=>alert('コピーしました')).catch(()=>alert('コピーに失敗しました'));
+});
+
+document.getElementById('close-output').addEventListener('click',()=>{
+  document.getElementById('output-area').classList.add('hidden');
+  document.getElementById('copy-btn').classList.add('hidden');
+});
+
+renderStakeholders();
+renderResistances();
+renderComms();
+</script>
+</body>
+</html>
